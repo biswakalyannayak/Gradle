@@ -1,7 +1,9 @@
 plugins {
 	id 'org.springframework.boot' version '2.3.0.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id 'java'
+	id 'jacoco'
+	id 'org.sonarqube' version '2.8'
+	id "java"
 }
 
 group = 'com.bk'
@@ -14,12 +16,42 @@ configurations {
 	}
 }
 
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.listFiles = true
+}
+
+
+sourceSets {
+	//Declaring this source set creates compile time and runtime configurations for it.
+	integrationTest {
+
+		java {
+			compileClasspath += sourceSets.main.output + sourceSets.test.output
+			runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+			srcDir file('src/test/java')
+			include(["**/*IntegrationTest.java"])
+		}
+		resources.srcDir file('src/test/resources')
+	}
+}
+
+configurations {
+	//Configures compile and runtime configurations for our integration tests and includes the dependencies of the test task.
+	integrationTestImplementation.extendsFrom implementation, testImplementation
+	integrationTestRuntime.extendsFrom runtimeOnly
+
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -29,6 +61,50 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 }
 
-test {
-	useJUnitPlatform()
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		html.enabled true
+	}
 }
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.0
+			}
+		}
+	}
+}
+
+test {
+	failFast = true
+	ignoreFailures = false
+	testLogging.showStandardStreams = true
+	exclude(["**/*IntegrationTest.class"])
+	outputs.upToDateWhen { false }
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+//Create the task that runs the integration tests found from the configured source directory and uses the correct classpath.
+task integrationTest(type: Test) {
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	outputs.upToDateWhen { false }
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+	//Ensure that our unit tests run before our integration tests
+	//mustRunAfter test
+}
+
+sonarqube {
+	properties {
+		property 'sonar.host.url', 'http://localhost:9000'
+	}
+}
+
+//Ensure that the check task fails the build if there are failing integration tests.
+//check.dependsOn integrationTest
+check.dependsOn jacocoTestCoverageVerification
