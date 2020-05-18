@@ -12,8 +12,7 @@ pipeline {
 
     stages {
         stage('Setup') {
-            steps {
-            Environment{
+             Environment{
                 ARTIFACT =  sh (script: "gradle properties | grep 'group='",
                                   returnStdout: true
                                 ).trim()
@@ -24,6 +23,7 @@ pipeline {
                 IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
                 GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
             }
+            steps {
                sh "printenv | sort"
             }
         }
@@ -57,7 +57,7 @@ pipeline {
 
         stage('Push to registry') {
             steps {
-                 echo "run sonar"
+                 echo "run registry"
             }
         }
     }
