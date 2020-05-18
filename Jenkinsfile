@@ -13,10 +13,10 @@ pipeline {
     stages {
         stage('Preparation') {
              environment {
-                ARTIFACT =  sh (script: "gradle properties | grep 'group='",
+                ARTIFACT =  sh (script: " gradle properties | grep 'group:'  | awk '{print $2}'",
                                   returnStdout: true
                                 ).trim()
-                VERSION =  sh ( script: "gradle properties | grep 'version='",
+                VERSION =  sh ( script: " gradle properties | grep 'version:'  | awk '{print $2}'",
                                 returnStdout: true
                               ).trim()
                 CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
