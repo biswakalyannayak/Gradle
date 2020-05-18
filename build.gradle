@@ -108,3 +108,18 @@ sonarqube {
 //Ensure that the check task fails the build if there are failing integration tests.
 //check.dependsOn integrationTest
 check.dependsOn jacocoTestCoverageVerification
+
+
+task printVersion {
+	outputs.upToDateWhen { false }
+	doLast {
+		println  project.version.toString()
+	}
+}
+task printGroup {
+	outputs.upToDateWhen { false }
+	doLast {
+		println project.group.toString()
+	}
+}
+
