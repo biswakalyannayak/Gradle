@@ -5,6 +5,13 @@ pipeline {
         gradle 'gradle-6.4'
     }
 
+    environment {
+        ARTIFACT = "initialize"
+        VERSION = "0.0.0"
+        CONTAINER = "biswakalyan"
+        IMAGE = "biswakalyan"
+        GIT_RELEASE_TAG = "release"
+    }
     options {
         timeout(time: 1, unit: 'HOURS')
         buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -13,10 +20,10 @@ pipeline {
     stages {
         stage('Preparation') {
              environment {
-                ARTIFACT =  sh (script: "gradle printGroup",
+                ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                                   returnStdout: true
                                 ).trim()
-                VERSION =  sh ( script: " gradle printVersion",
+                VERSION =  sh ( script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                                 returnStdout: true
                               ).trim()
                 CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
@@ -24,7 +31,7 @@ pipeline {
                 GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
             }
             steps {
-                sh "printenv | sort"
+               sh "printenv | sort"
                echo "Preparation done for build."
             }
         }
