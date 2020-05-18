@@ -13,10 +13,10 @@ pipeline {
     stages {
         stage('Preparation') {
              environment {
-                ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+                ARTIFACT =  sh (script: "gradle properties | grep \'group:\'",
                                   returnStdout: true
                                 ).trim()
-                VERSION =  sh ( script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
+                VERSION =  sh ( script: " gradle properties | grep \'version:\'",
                                 returnStdout: true
                               ).trim()
                 CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
@@ -24,6 +24,7 @@ pipeline {
                 GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
             }
             steps {
+                sh "printenv | sort"
                echo "Preparation done for build."
             }
         }
