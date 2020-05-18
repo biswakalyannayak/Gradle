@@ -11,8 +11,8 @@ pipeline {
     }
 
     stages {
-        stage('Setup') {
-             Environment{
+        stage('Preparation') {
+             environment {
                 ARTIFACT =  sh (script: "gradle properties | grep 'group='",
                                   returnStdout: true
                                 ).trim()
@@ -24,7 +24,12 @@ pipeline {
                 GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
             }
             steps {
-               sh "printenv | sort"
+               echo "Preparation done for build."
+            }
+        }
+        stage('Print variables') {
+            steps {
+                sh "printenv | sort"
             }
         }
         stage('Build') {
