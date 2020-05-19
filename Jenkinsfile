@@ -7,8 +7,8 @@ pipeline {
 
     environment {
         ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
-                                          returnStdout: true
-                                        ).trim()
+                        returnStdout: true
+                       ).trim()
         VERSION =  sh ( script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                         returnStdout: true
                       ).trim()
@@ -46,7 +46,7 @@ pipeline {
         stage('Integration Test') {
             steps {
                 echo "run integration tests"
-                sh 'gradle integrationTest --warning-mode=all'
+                sh 'gradle integrationTest'
             }
              post {
                 success {
@@ -58,6 +58,7 @@ pipeline {
         stage('Sonarqube') {
             steps {
                 echo "run sonar"
+                sh 'gradle sonarqube'
             }
         }
 
