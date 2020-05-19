@@ -37,6 +37,7 @@ pipeline {
 
             post {
                 success {
+                    junit 'build/reports/**/jacoco*.xml'
                     archiveArtifacts 'build/libs/*.jar'
                 }
             }
@@ -46,6 +47,11 @@ pipeline {
             steps {
                 echo "run integration tests"
                 sh 'gradle integrationTest --warning-mode=all'
+            }
+             post {
+                success {
+                    junit 'build/reports/**/index.html'
+                }
             }
         }
 
