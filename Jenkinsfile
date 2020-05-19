@@ -58,7 +58,7 @@ pipeline {
         stage('Sonarqube') {
             steps {
                 echo "run sonar"
-                sh 'gradle --info sonarqube -Dsonar.coverage.jacoco.xmlReportPaths=./build/reports/jacoco/test/*.xml'
+                sh 'gradle --info sonarqube'
             }
         }
 

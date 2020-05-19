@@ -20,6 +20,11 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.listFiles = true
 }
+tasks.withType(Test) {
+	failFast = true
+	ignoreFailures = false
+	testLogging.showStandardStreams = true
+}
 
 
 sourceSets {
@@ -31,6 +36,13 @@ sourceSets {
 			runtimeClasspath += sourceSets.main.output + sourceSets.test.output
 			srcDir file('src/test/java')
 			include(["**/*IntegrationTest.java"])
+		}
+		resources.srcDir file('src/test/resources')
+	}
+	test {
+		java {
+			srcDir 'test/java'
+			exclude(["**/*IntegrationTest.java"])
 		}
 		resources.srcDir file('src/test/resources')
 	}
@@ -62,9 +74,14 @@ dependencies {
 }
 
 jacocoTestReport {
+	executionData(file("${project.buildDir}/jacoco/test.exec"),file("${project.buildDir}/jacoco/integrationTest.exec"))
 	reports {
+		// for sonarqube
 		xml.enabled true
+		xml.destination(file("${project.buildDir}/reports/jacoco/all-tests/jacocoAllTestReport.xml"))
+		// for devs
 		html.enabled true
+		html.destination file("${project.buildDir}/reports/jacoco/all-tests/html")
 	}
 }
 
@@ -79,20 +96,20 @@ jacocoTestCoverageVerification {
 }
 
 test {
-	failFast = true
-	ignoreFailures = false
-	testLogging.showStandardStreams = true
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/test.exec")
+	}
 	exclude(["**/*IntegrationTest.class"])
-	outputs.upToDateWhen { false }
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport
 }
 
 //Create the task that runs the integration tests found from the configured source directory and uses the correct classpath.
 task integrationTest(type: Test) {
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/integrationTest.exec")
+	}
 	testClassesDirs = sourceSets.integrationTest.output.classesDirs
 	classpath = sourceSets.integrationTest.runtimeClasspath
-	outputs.upToDateWhen { false }
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
 	//Ensure that our unit tests run before our integration tests
@@ -101,12 +118,17 @@ task integrationTest(type: Test) {
 
 sonarqube {
 	properties {
-		property 'sonar.host.url', 'http://localhost:9000'
+		property "sonar.sourceEncoding", "UTF-8"
+		//FIXME We can provide the sonar host url in build file
+		//Change me- property 'sonar.host.url', 'http://localhost:9000'
+		//Change me - property "sonar.exclusions", "**/*Generated.java"
+		property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/reports/jacoco/all-tests/jacocoAllTestReport.xml"
 	}
 }
 
 //Ensure that the check task fails the build if there are failing integration tests.
 check.dependsOn jacocoTestCoverageVerification
+project.tasks["sonarqube"].dependsOn "jacocoTestReport"
 
 // Below are the additional tasks- not a must run
 task printVersion {
