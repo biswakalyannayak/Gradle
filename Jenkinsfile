@@ -37,8 +37,8 @@ pipeline {
 
             post {
                 success {
-                    junit 'build/reports/**/test/index.html'
-                    archiveArtifacts 'build/libs/*.jar'
+                    junit '**/test/index.html'
+                    archiveArtifacts '**/libs/*.jar'
                 }
             }
         }
