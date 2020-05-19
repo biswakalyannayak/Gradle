@@ -37,7 +37,7 @@ pipeline {
 
             post {
                 success {
-                    junit '**/test/index.html'
+                    junit '**/build/reports/jacoco/test/*.xml'
                     archiveArtifacts '**/libs/*.jar'
                 }
             }
