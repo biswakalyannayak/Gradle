@@ -6,11 +6,15 @@ pipeline {
     }
 
     environment {
-        ARTIFACT = "initialize"
-        VERSION = "0.0.0"
-        CONTAINER = "biswakalyan"
-        IMAGE = "biswakalyan"
-        GIT_RELEASE_TAG = "release"
+        ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+                                          returnStdout: true
+                                        ).trim()
+        VERSION =  sh ( script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
+                        returnStdout: true
+                      ).trim()
+        CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+        IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
+        GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
     }
     options {
         timeout(time: 1, unit: 'HOURS')
@@ -18,23 +22,6 @@ pipeline {
     }
 
     stages {
-        stage('Preparation') {
-             environment {
-                ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
-                                  returnStdout: true
-                                ).trim()
-                VERSION =  sh ( script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
-                                returnStdout: true
-                              ).trim()
-                CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
-                IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
-                GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
-            }
-            steps {
-               sh "printenv | sort"
-               echo "Preparation done for build."
-            }
-        }
         stage('Print variables') {
             steps {
                 sh "printenv | sort"
