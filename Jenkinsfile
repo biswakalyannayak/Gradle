@@ -37,7 +37,7 @@ pipeline {
 
             post {
                 success {
-                    junit '**/build/reports/jacoco/test/*.xml'
+                    junit '**/build/test-results/test/TEST-*.xml'
                     archiveArtifacts '**/libs/*.jar'
                 }
             }
@@ -50,7 +50,7 @@ pipeline {
             }
              post {
                 success {
-                    junit 'build/reports/**/integrationTest/index.html'
+                    junit '**/build/test-results/integrationTest/TEST-*.xml'
                 }
             }
         }
