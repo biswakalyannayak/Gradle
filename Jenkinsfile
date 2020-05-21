@@ -7,8 +7,9 @@ pipeline {
     }
 
     environment {
-        ARTIFACT =  """${sh (script: 'gradle properties | grep "group:"  | awk "{print $2}"',
-                        returnStdout: true
+        ARTIFACT =  """${sh(
+                            returnStdout: true,
+                            script: 'gradle properties | grep "group:"'
                        ).trim()}"""
         VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                         returnStdout: true
