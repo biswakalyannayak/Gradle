@@ -32,7 +32,7 @@ pipeline {
                 }
                 echo "A-found value after ${ARTIFACT}"
                 echo "V-found value after ${VERSION}"
-                echo "C-found value after ${CONTAINER}"
+                echo "C-found value after biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
             }
         }
         stage('Print variables') {
