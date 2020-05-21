@@ -1,5 +1,5 @@
 def ARTIFACT = ''
-def c = ''
+def VERSION = ''
 pipeline {
     agent any
     tools {
@@ -7,9 +7,7 @@ pipeline {
     }
 
     environment {
-        VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
-                                returnStdout: true
-                              ).trim()
+
 
         CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
         IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
@@ -26,11 +24,15 @@ pipeline {
                 echo "A-found value  ${ARTIFACT}"
                 script{
                      ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
-                                                           returnStdout: true
-                                                         ).trim()
+                                   returnStdout: true
+                                 ).trim()
+                     VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
+                                  returnStdout: true
+                                ).trim()
                      c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
                 }
                 echo "A-found value after ${ARTIFACT}"
+                echo "V-found value after ${VERSION}"
                 echo "C-found value after ${c}"
             }
         }
