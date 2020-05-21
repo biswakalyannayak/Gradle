@@ -28,9 +28,7 @@ pipeline {
                      VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                                   returnStdout: true
                                 ).trim()
-                     CONTAINER = sh (returnStdout: true,
-                                        script: "echo biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
-                                    ).trim()
+                     CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
                 }
                 echo "A-found value after ${ARTIFACT}"
                 echo "V-found value after ${VERSION}"
