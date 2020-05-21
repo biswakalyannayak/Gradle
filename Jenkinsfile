@@ -6,10 +6,7 @@ pipeline {
     }
 
     environment {
-        withGradle(){
-            sh "gradle properties | grep \'group:\'  | awk \'{print \$2}\' > groupid"
-        }
-        ARTIFACT = readFile('groupid').trim()
+        ARTIFACT = sh(script: " gradle properties | grep \'group:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
         VERSION =  sh(script: " gradle properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
         CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
         IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
@@ -45,7 +42,10 @@ pipeline {
         stage('Integration Test') {
             steps {
                 echo "run integration tests"
-                sh 'gradle integrationTest'
+                 withGradle() {
+                   sh 'gradle integrationTest'
+                }
+
             }
              post {
                 success {
@@ -54,10 +54,13 @@ pipeline {
             }
         }
 
-        stage('Sonarqube') {
+         stage('Sonarqube') {
             steps {
-                echo "run sonar"
-                sh 'gradle --info sonarqube'
+                withSonarQubeEnv('code-quality'){
+                    withGradle(){
+                         sh 'gradle --info sonarqube'
+                    }
+                }
             }
         }
 
