@@ -1,15 +1,15 @@
+def ARTIFACT = "";
+def VERSION = ""
 pipeline {
     agent any
     tools {
         gradle 'gradle-6.4'
     }
 
-
-
     environment {
-        ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+        ARTIFACT =  """${sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                         returnStdout: true
-                       ).trim()
+                       ).trim()}"""
         VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                         returnStdout: true
                       ).trim()
