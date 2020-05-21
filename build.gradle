@@ -44,7 +44,6 @@ sourceSets {
 			srcDir 'test/java'
 			exclude(["**/*IntegrationTest.java"])
 		}
-		resources.srcDir file('src/test/resources')
 	}
 }
 
