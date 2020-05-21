@@ -25,13 +25,15 @@ pipeline {
     stages {
         stage('Set Variable') {
             steps {
-                echo "found value  ${ARTIFACT}"
+                echo "A-found value  ${ARTIFACT}"
                 script{
                      ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                                                            returnStdout: true
                                                          ).trim()
+                     CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
                 }
-                echo "found value after ${ARTIFACT}"
+                echo "A-found value after ${ARTIFACT}"
+                echo "C-found value after ${CONTAINER}"
             }
         }
         stage('Print variables') {
