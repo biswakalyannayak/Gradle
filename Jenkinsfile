@@ -1,5 +1,6 @@
 def ARTIFACT = ''
 def VERSION = ''
+
 pipeline {
     agent any
     tools {
@@ -7,8 +8,6 @@ pipeline {
     }
 
     environment {
-
-
         CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
         IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
         GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
@@ -29,11 +28,11 @@ pipeline {
                      VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                                   returnStdout: true
                                 ).trim()
-                     c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+                     //c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
                 }
                 echo "A-found value after ${ARTIFACT}"
                 echo "V-found value after ${VERSION}"
-                echo "C-found value after ${c}"
+                echo "C-found value after ${CONTAINER}"
             }
         }
         stage('Print variables') {
