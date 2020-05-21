@@ -1,12 +1,12 @@
 pipeline {
     agent any
-
     tools {
         gradle 'gradle-6.4'
     }
 
+
+
     environment {
-        sh (script: 'gradle -v' returnStdout: true)
         ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                         returnStdout: true
                        ).trim()
