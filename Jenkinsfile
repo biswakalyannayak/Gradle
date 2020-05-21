@@ -28,15 +28,18 @@ pipeline {
                      VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                                   returnStdout: true
                                 ).trim()
-                     //c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
                 }
                 echo "A-found value after ${ARTIFACT}"
                 echo "V-found value after ${VERSION}"
-                echo "C-found value after biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+                c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+                echo "C-found value after ${c}"
             }
         }
         stage('Print variables') {
             steps {
+                script{
+                    CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+                }
                 sh "printenv | sort"
             }
         }
