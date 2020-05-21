@@ -22,11 +22,13 @@ pipeline {
     stages {
         stage('Set Variable') {
             steps {
-                echo "$ARTIFACT"
-                ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
-                                       returnStdout: true
-                                     ).trim()
-                echo "$ARTIFACT"
+                echo "found value  ${ARTIFACT}"
+                script{
+                     ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+                                                           returnStdout: true
+                                                         ).trim()
+                }
+                echo "found value after ${ARTIFACT}"
             }
         }
         stage('Print variables') {
