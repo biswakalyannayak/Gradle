@@ -1,5 +1,5 @@
-def ARTIFACT = "";
-def VERSION = ""
+def ARTIFACT = ''
+
 pipeline {
     agent any
     tools {
