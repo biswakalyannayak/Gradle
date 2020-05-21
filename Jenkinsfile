@@ -27,7 +27,7 @@ pipeline {
             steps {
                 checkout scm
                 withGradle() {
-                    sh 'gradle build --rerun-tasks'
+                    sh 'gradle clean build --rerun-tasks'
                 }
             }
 
