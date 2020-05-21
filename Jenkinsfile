@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        sh 'gradle -v'
+        sh (script: 'gradle -v' returnStdout: true)
         ARTIFACT =  sh (script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                         returnStdout: true
                        ).trim()
