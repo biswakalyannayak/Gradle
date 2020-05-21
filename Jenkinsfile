@@ -1,6 +1,6 @@
 def ARTIFACT = ''
 def VERSION = ''
-
+def CONTAINER = ''
 pipeline {
     agent any
     tools {
@@ -28,11 +28,13 @@ pipeline {
                      VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                                   returnStdout: true
                                 ).trim()
+                     CONTAINER = sh (returnStdout: true,
+                                        script: "echo biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
+                                    ).trim()
                 }
                 echo "A-found value after ${ARTIFACT}"
                 echo "V-found value after ${VERSION}"
-                c = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
-                echo "C-found value after ${c}"
+                echo "C-found value after ${CONTAINER}"
             }
         }
         stage('Print variables') {
