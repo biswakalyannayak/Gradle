@@ -7,10 +7,6 @@ pipeline {
     }
 
     environment {
-        ARTIFACT =  """${sh(
-                            returnStdout: true,
-                            script: 'gradle properties | grep "group:"'
-                       ).trim()}"""
         VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
                         returnStdout: true
                       ).trim()
@@ -24,6 +20,15 @@ pipeline {
     }
 
     stages {
+        stage('Set Variable') {
+            steps {
+                echo "$ARTIFACT"
+                ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+                                       returnStdout: true
+                                     ).trim()
+                echo "$ARTIFACT"
+            }
+        }
         stage('Print variables') {
             steps {
                 sh "printenv | sort"
