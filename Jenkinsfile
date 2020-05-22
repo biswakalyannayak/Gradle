@@ -8,6 +8,12 @@ pipeline {
     }
 
     environment {
+        ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
+                                       returnStdout: true
+                                     ).trim()
+        VERSION =  sh ( script: "gradle properties | grep \'version:\'  | awk \'{print \$2}\'",
+                                      returnStdout: true
+                                    ).trim()
         CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
         IMAGE = "biswakalyan/${ARTIFACT}:${VERSION}-${BUILD_NUMBER}"
         GIT_RELEASE_TAG = "release/${ARTIFACT}@${VERSION}-${BUILD_NUMBER}"
