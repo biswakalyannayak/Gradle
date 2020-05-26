@@ -81,14 +81,20 @@ pipeline {
 
         stage('Push to registry') {
             steps {
-                 echo "run registry"
+                timeout(time: 10, unit: 'SECONDS') {
+                    script {
+                        env.QA = input message: 'Publish to QA?', ok: 'Pass!', submitter: 'GRP-QA-DEPLOYER', submitterParameter: "submitter"
+                    }
+                    echo "QA publish!"
+                }
+                sh "printenv | sort"
             }
         }
         stage('Peer review') {
             steps {
                 timeout(time: 10, unit: 'DAYS') {
                     script {
-                        env.QA = input message: 'Is peer review pass?', ok: 'Pass!', submitter: 'GRP-PEER-REVIEW', submitterParameter: "submitter"
+                        env.SIT = input message: 'Is peer review pass?', ok: 'Pass!', submitter: 'GRP-PEER-REVIEW', submitterParameter: "submitter"
                     }
                     echo "Peer review passed!"
                 }
