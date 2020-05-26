@@ -98,7 +98,6 @@ pipeline {
         stage('Peer review') {
             steps {
                 timeout(time: 10, unit: 'DAYS') {
-                    input()
                     script {
                         env.QA = input message: 'Is peer review pass?', ok: 'Pass!', submitter: 'GRP-PEER-REVIEW', submitterParameter: "submitter"
                     }
