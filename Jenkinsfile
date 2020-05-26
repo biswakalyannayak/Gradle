@@ -81,7 +81,7 @@ pipeline {
 
         stage('Push to registry') {
             steps {
-                timeout(time: 10, unit: 'SECONDS') {
+                timeout(time: 60, unit: 'SECONDS') {
                     script {
                         env.QA = input message: 'Publish to QA?', ok: 'Pass!', submitter: 'GRP-QA-DEPLOYER', submitterParameter: "submitter"
                     }
