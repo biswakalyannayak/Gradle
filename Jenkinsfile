@@ -2,7 +2,7 @@ def ARTIFACT = ''
 def VERSION = ''
 def CONTAINER = ''
 pipeline {
-    agent none
+    agent any
 
     environment {
         CONT_HOME = '/tmp/home'
@@ -19,9 +19,8 @@ pipeline {
     }
 
     stages {
-
         stage('Set Variable') {
-        agent any
+            agent any
             steps {
                 echo "A-found value  ${ARTIFACT}"
                 echo "cont home ${CONT_HOME}"
@@ -42,7 +41,7 @@ pipeline {
             }
         }
         stage('Print variables') {
-        agent any
+            agent any
             steps {
                 script{
                     CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
@@ -51,7 +50,7 @@ pipeline {
             }
         }
         stage('Build') {
-        agent any
+            agent any
             steps {
                 checkout scm
                 withGradle() {
@@ -68,7 +67,7 @@ pipeline {
         }
 
         stage('Integration Test') {
-        agent any
+            agent any
             steps {
                 echo "run integration tests"
                  withGradle() {
@@ -83,8 +82,8 @@ pipeline {
             }
         }
 
-         stage('Sonarqube') {
-         agent any
+        stage('Sonarqube') {
+            agent any
             steps {
                 withSonarQubeEnv('code-quality'){
                     withGradle(){
@@ -95,7 +94,7 @@ pipeline {
         }
 
         stage('Push to registry') {
-        agent any
+            agent any
             steps {
                 timeout(time: 60, unit: 'SECONDS') {
                     script {
@@ -107,7 +106,7 @@ pipeline {
             }
         }
         stage('Peer review') {
-        agent any
+            agent any
             steps {
                 timeout(time: 10, unit: 'DAYS') {
                     script {
