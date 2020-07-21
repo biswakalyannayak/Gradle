@@ -9,9 +9,8 @@ pipeline {
 
         GRADLE = "./gradlew -Duser.home=$CONT_HOME"
 
-        VERSION =  sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
-        BUILDVERSION = get_version()
-
+        VERSION1 =  sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
+        VERSION =  get_version()
     }
 
     options {
@@ -27,7 +26,7 @@ pipeline {
                 echo "cont home ${CONT_HOME}"
                 echo "gradle home ${GRADLE}"
                 echo "V-found value  ${VERSION}"
-                echo "V2-found value  ${BUILDVERSION}"
+                echo "V2-found value  ${VERSION1}"
                 script{
                      ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                                    returnStdout: true
