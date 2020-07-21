@@ -6,8 +6,11 @@ pipeline {
 
     environment {
         CONT_HOME = '/tmp/home'
+        echo "cont home ${CONT_HOME}"
         GRADLE = "./gradlew -Duser.home=$CONT_HOME"
+        echo "gradle home ${GRADLE}"
         VERSION =  node('master') { sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()}
+        echo "V-found value  ${VERSION}"
     }
 
     options {
@@ -21,7 +24,7 @@ pipeline {
         agent any
             steps {
                 echo "A-found value  ${ARTIFACT}"
-                echo "V-found value  ${VERSION}"
+
                 script{
                      ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                                    returnStdout: true
