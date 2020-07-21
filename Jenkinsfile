@@ -9,7 +9,7 @@ pipeline {
 
         GRADLE = "./gradlew -Duser.home=$CONT_HOME"
 
-        VERSION =  node('master') { sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()}
+        VERSION =  sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
 
     }
 
