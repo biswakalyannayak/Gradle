@@ -2,9 +2,12 @@ def ARTIFACT = ''
 def VERSION = ''
 def CONTAINER = ''
 pipeline {
-    agent any
-    tools {
-        gradle 'gradle-6.4'
+    agent none
+
+    environment {
+        CONT_HOME = '/tmp/home'
+        GRADLE = "./gradlew -Duser.home=$CONT_HOME"
+        VERSION = sh(script: " $GRADLE properties | grep \'version:\'  | awk \'{print \$2}\'", returnStdout: true).trim()
     }
 
     options {
@@ -13,9 +16,12 @@ pipeline {
     }
 
     stages {
+
         stage('Set Variable') {
+        agent any
             steps {
                 echo "A-found value  ${ARTIFACT}"
+                echo "V-found value  ${VERSION}"
                 script{
                      ARTIFACT =  sh ( script: "gradle properties | grep \'group:\'  | awk \'{print \$2}\'",
                                    returnStdout: true
@@ -31,6 +37,7 @@ pipeline {
             }
         }
         stage('Print variables') {
+        agent any
             steps {
                 script{
                     CONTAINER = "biswakalyan/${ARTIFACT}-${GIT_BRANCH}-${VERSION}-${currentBuild.startTimeInMillis}-${GIT_COMMIT}"
@@ -39,6 +46,7 @@ pipeline {
             }
         }
         stage('Build') {
+        agent any
             steps {
                 checkout scm
                 withGradle() {
@@ -55,6 +63,7 @@ pipeline {
         }
 
         stage('Integration Test') {
+        agent any
             steps {
                 echo "run integration tests"
                  withGradle() {
@@ -70,6 +79,7 @@ pipeline {
         }
 
          stage('Sonarqube') {
+         agent any
             steps {
                 withSonarQubeEnv('code-quality'){
                     withGradle(){
@@ -80,6 +90,7 @@ pipeline {
         }
 
         stage('Push to registry') {
+        agent any
             steps {
                 timeout(time: 60, unit: 'SECONDS') {
                     script {
@@ -91,6 +102,7 @@ pipeline {
             }
         }
         stage('Peer review') {
+        agent any
             steps {
                 timeout(time: 10, unit: 'DAYS') {
                     script {
